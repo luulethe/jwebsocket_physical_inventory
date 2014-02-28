@@ -7,6 +7,10 @@
     <groupId>physical-inventory</groupId>
     <artifactId>physical-inventory</artifactId>
     <version>1.0-SNAPSHOT</version>
+    <properties>
+        <middle-tier-version>1.0.2</middle-tier-version>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.jwebsocket</groupId>
@@ -17,6 +21,16 @@
             <groupId>org.jwebsocket</groupId>
             <artifactId>jWebSocketServer</artifactId>
             <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.discorp</groupId>
+            <artifactId>model</artifactId>
+            <version>${middle-tier-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.discorp</groupId>
+            <artifactId>whole-goods</artifactId>
+            <version>${middle-tier-version}</version>
         </dependency>
         <dependency>
             <groupId>com.google.code.gson</groupId>
