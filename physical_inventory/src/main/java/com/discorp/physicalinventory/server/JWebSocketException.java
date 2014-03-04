@@ -9,5 +9,6 @@ public class JWebSocketException extends Exception
     public JWebSocketException(String s)
     {
         super(s);
+        System.out.println("error.................");
     }
 }

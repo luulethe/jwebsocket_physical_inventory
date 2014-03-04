@@ -4,11 +4,7 @@ jws.ToDoListClientPlugIn = {
     //Method is called when a token has to be progressed
     processToken: function (aToken)
     {
-        if (aToken.ns == jws.ToDoListClientPlugIn.NS)
-        {
-            document.getElementById("responseContent").value = JSON.stringify(aToken)
-        }
-
+        document.getElementById("responseContent").value = JSON.stringify(aToken)
     },
     submitToServer: function (lToken,aOptions)
     {
@@ -18,7 +14,7 @@ jws.ToDoListClientPlugIn = {
         }
         else
         {
-            alert("disconnected");
+            log("disconnected");
         }
     }
 };

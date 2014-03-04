@@ -7,6 +7,6 @@ call xcopy "D:\qsoft\jwebsocket\code\physical_inventory1\physical_inventory\targ
 echo all bundlers has been copied
 REM start SM
 echo starting SM
-call "D:\qsoft\jwebsocket\jWebSocketServer-1.0-b30518\jWebSocket-1.0\bin\myJWebSocketServer.bat"
+call "D:\qsoft\jwebsocket\jWebSocketServer-1.0-b30518\jWebSocket-1.0\bin\startServerPhysicalInventory.bat"
 call cd..
 pause

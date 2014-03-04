@@ -62,26 +62,32 @@ public class Audit extends TokenPlugIn
 
     private void endAudit(WebSocketConnector connector, Token token) throws JWebSocketException
     {
-        InventoryResponseDTO responseDTO = wholeGoods.endAudit(token.getString("token"), token.getLong("auditHistoryId"), token.getBoolean("isFinish"));
+        System.out.println(token.getBoolean("isFinish"));
+        System.out.println(Long.parseLong(token.getString("auditHistoryId")));
+        InventoryResponseDTO responseDTO = wholeGoods.endAudit(token.getString("token"), Long.parseLong(token.getString("auditHistoryId")), token.getBoolean("isFinish"));
+        System.out.println("b1");
         if (responseDTO.getLoginResult().getLoginStatus().equals(LoginStatus.PASS))
         {
-            User.removeUserFromAuditSession(token.getLong("auditHistoryId"), connector);
+            User.removeUserFromAuditSession(Long.parseLong(token.getString("auditHistoryId")), connector);
         }
+        System.out.println("b2");
         Token lResponse = createResponse(token);
 
         String result = gson.toJson(responseDTO);
         lResponse.setString("msg", result);
         lResponse.setString("reqType", "responseEnd");
-
+        System.out.println("b3");
         sendToken(connector, lResponse);
-
+        System.out.println("end audit successfully");
     }
 
     private void startAudit(WebSocketConnector connector, Token token)
     {
-        InventoryResponseDTO responseDTO = wholeGoods.startAudit(token.getString("token"), token.getLong("branchId"));
+        System.out.println("start audit");
+        InventoryResponseDTO responseDTO = wholeGoods.startAudit(token.getString("token"), Long.parseLong(token.getString("branchId")));
         if (responseDTO.getLoginResult().getLoginStatus().equals(LoginStatus.PASS) && (responseDTO.getInventoryStatusDTO().getStatus().equals(ResponseStatus.SUCCESS)))
         {
+
             User.addUserToAuditSession(((InventoryProcessDTO) responseDTO.getResultDTO()).getAuditHistoryId(), connector);
         }
         Token lResponse = createResponse(token);
@@ -91,5 +97,6 @@ public class Audit extends TokenPlugIn
         lResponse.setString("reqType", "responseStart");
 
         sendToken(connector, lResponse);
+        System.out.println("success start");
     }
 }

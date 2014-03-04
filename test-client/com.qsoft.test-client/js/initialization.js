@@ -21,6 +21,13 @@ function initPage()
 function submit()
 {
     var submitContent = document.getElementById("submitContent").value;
-    var lToken =  JSON.parse(submitContent)
-    websocketClient.submitToServer(lToken);
+    if (submitContent.trim().length >0) {
+        var lToken =  JSON.parse(submitContent)
+        if (!websocketClient.isConnected())
+        {
+            websocketClient = new jws.jWebSocketJSONClient();
+            logon();
+        }
+        websocketClient.submitToServer(lToken);
+    }
 }
