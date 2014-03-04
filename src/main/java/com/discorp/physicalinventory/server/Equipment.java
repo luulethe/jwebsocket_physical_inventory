@@ -1,8 +1,10 @@
 package com.discorp.physicalinventory.server;
 
 import com.discorp.model.dto.LocationDTO;
+import com.discorp.physicalinventory.dto.EquipmentDTO;
 import com.discorp.physicalinventory.middletierservices.BaseService;
 import com.discorp.wholegoods.WholeGoods;
+import com.discorp.wholegoods.constant.ResponseStatus;
 import com.discorp.wholegoods.model.ImageDTO;
 import com.discorp.wholegoods.model.InventoryResponseDTO;
 import com.google.gson.Gson;
@@ -74,13 +76,24 @@ public class Equipment extends TokenPlugIn
                 wholeGoods.addNote(token.getString("token"), token.getLong("auditHistoryId"),
                         token.getLong("equipmentWebId"), token.getString("note"));
 
-        Token response = createResponse(token);
         String result = gson.toJson(inventoryResponseDTO);
-        response.setString("msg", result);
-        response.setString("reqType", "responseScan");
+        sendToToken(connector, token, result, "responseAddNote");
+        if ((inventoryResponseDTO.getInventoryStatusDTO() != null) &&
+                (inventoryResponseDTO.getInventoryStatusDTO().getStatus().equals(ResponseStatus.SUCCESS)))
+        {
+            sendAddNoteForOther(connector, token);
+        }
 
-        broadCastMessage(token.getLong("auditHistoryId"), response);
+    }
 
+    private void sendAddNoteForOther(WebSocketConnector connector, Token token)
+    {
+        EquipmentDTO equipmentDTO = new EquipmentDTO();
+        equipmentDTO.setAuditHistoryId(token.getLong("auditHistoryId"));
+        equipmentDTO.setEquipmentWebId(token.getLong("equipmentWebId"));
+        equipmentDTO.setNote(token.getString("note"));
+
+        broadCastMessage(token.getLong("auditHistoryId"), connector, token, gson.toJson(equipmentDTO), "responseAddNoteFromOther");
     }
 
     private void addHours(WebSocketConnector connector, Token token)
@@ -89,30 +102,42 @@ public class Equipment extends TokenPlugIn
                 wholeGoods.addHours(token.getString("token"), token.getLong("auditHistoryId"),
                         token.getLong("equipmentWebId"), token.getString("hours"));
 
-        Token response = createResponse(token);
         String result = gson.toJson(inventoryResponseDTO);
-        response.setString("msg", result);
-        response.setString("reqType", "responseScan");
+        sendToToken(connector, token, result, "responseAddHours");
+        if ((inventoryResponseDTO.getInventoryStatusDTO() != null) &&
+                (inventoryResponseDTO.getInventoryStatusDTO().getStatus().equals(ResponseStatus.SUCCESS)))
+        {
+            sendAddHoursForOther(connector, token);
+        }
+    }
 
-        broadCastMessage(token.getLong("auditHistoryId"), response);
+    private void sendAddHoursForOther(WebSocketConnector connector, Token token)
+    {
+        EquipmentDTO equipmentDTO = new EquipmentDTO();
+        equipmentDTO.setAuditHistoryId(token.getLong("auditHistoryId"));
+        equipmentDTO.setEquipmentWebId(token.getLong("equipmentWebId"));
+        equipmentDTO.setHours(token.getString("hours"));
+
+        broadCastMessage(token.getLong("auditHistoryId"), connector, token, gson.toJson(equipmentDTO), "responseAddHoursFromOther");
     }
 
     private void addUnknown(WebSocketConnector connector, Token token)
     {
         ImageDTO image = new ImageDTO();
-
+        if (token.getString("fileName") != null)
+        {
+            image.setFileName(token.getString("fileName"));
+            image.setFileType(token.getString("fileType"));
+            image.setFileContent(token.getObject("fileContent").toString().getBytes());
+        }
         LocationDTO locationDTO = (new Gson()).fromJson(token.getString("locationDTO"), LocationDTO.class);
         InventoryResponseDTO inventoryResponseDTO =
                 wholeGoods.addUnknownEquipment(token.getString("token"), token.getLong("auditHistoryId"),
                         token.getString("description"), image, locationDTO, token.getBoolean("identified"));
 
-        Token response = createResponse(token);
-        String result = gson.toJson(inventoryResponseDTO);
-        response.setString("msg", result);
-        response.setString("reqType", "responseAddUnknown");
-
-        broadCastMessage(token.getLong("auditHistoryId"), response);
-
+        sendToToken(connector, token, gson.toJson(inventoryResponseDTO), "responseAddUnknown");
+        String resultForOther = gson.toJson(inventoryResponseDTO.getResultDTO());
+        broadCastMessage(token.getLong("auditHistoryId"), connector, token, resultForOther, "responseAddUnknownOther");
     }
 
     private void scan(WebSocketConnector connector, Token token)
@@ -120,15 +145,12 @@ public class Equipment extends TokenPlugIn
         LocationDTO locationDTO = (new Gson()).fromJson(token.getString("locationDTO"), LocationDTO.class);
         InventoryResponseDTO inventoryResponseDTO =
                 wholeGoods.scanEquipment(token.getString("token"), token.getLong("auditHistoryId"), token.getString("qrCode"), locationDTO);
-        Token response = createResponse(token);
 
         String result = gson.toJson(inventoryResponseDTO);
-        response.setString("msg", result);
-        response.setString("reqType", "responseScan");
-
-        broadCastMessage(token.getLong("auditHistoryId"), response);
+        sendToToken(connector, token, result, "responseScan");
+        String resultForOther = gson.toJson(inventoryResponseDTO.getResultDTO());
+        broadCastMessage(token.getLong("auditHistoryId"), connector, token, resultForOther, "responseScanOther");
     }
-
 
     private void markOff(WebSocketConnector connector, Token token)
     {
@@ -136,12 +158,23 @@ public class Equipment extends TokenPlugIn
                 wholeGoods.markOff(token.getString("token"), token.getLong("auditHistoryId"),
                         token.getLong("equipmentWebId"), token.getString("markOffReason"));
 
-        Token response = createResponse(token);
         String result = gson.toJson(inventoryResponseDTO);
-        response.setString("msg", result);
-        response.setString("reqType", "responseMarkOff");
+        sendToToken(connector, token, result, "responseMarkOff");
+        if ((inventoryResponseDTO.getInventoryStatusDTO() != null) &&
+                (inventoryResponseDTO.getInventoryStatusDTO().getStatus().equals(ResponseStatus.SUCCESS)))
+        {
+            sendMarkOffForOther(connector, token);
+        }
+    }
 
-        broadCastMessage(token.getLong("auditHistoryId"), response);
+    private void sendMarkOffForOther(WebSocketConnector connector, Token token)
+    {
+        EquipmentDTO equipmentDTO = new EquipmentDTO();
+        equipmentDTO.setAuditHistoryId(token.getLong("auditHistoryId"));
+        equipmentDTO.setEquipmentWebId(token.getLong("equipmentWebId"));
+        equipmentDTO.setHours(token.getString("markOffReason"));
+
+        broadCastMessage(token.getLong("auditHistoryId"), connector, token, gson.toJson(equipmentDTO), "responseMarkOffFromOther");
     }
 
     private void unMarkOff(WebSocketConnector connector, Token token)
@@ -150,17 +183,42 @@ public class Equipment extends TokenPlugIn
                 wholeGoods.unMarkOff(token.getString("token"), token.getLong("auditHistoryId"),
                         token.getLong("equipmentWebId"));
 
-        Token response = createResponse(token);
         String result = gson.toJson(inventoryResponseDTO);
-        response.setString("msg", result);
-        response.setString("reqType", "responseUnMarkOff");
-
-        broadCastMessage(token.getLong("auditHistoryId"), response);
+        sendToToken(connector, token, result, "responseUnMarkOff");
+        if ((inventoryResponseDTO.getInventoryStatusDTO() != null) &&
+                (inventoryResponseDTO.getInventoryStatusDTO().getStatus().equals(ResponseStatus.SUCCESS)))
+        {
+            sendUnMarkOffForOther(connector, token);
+        }
 
     }
-    private void broadCastMessage(Long sessionId, Token response)
+
+    private void sendUnMarkOffForOther(WebSocketConnector connector, Token token)
     {
-        for(WebSocketConnector connector : User.getUsersInAnAuditSession(sessionId))
-            sendToken(connector, response);
+        EquipmentDTO equipmentDTO = new EquipmentDTO();
+        equipmentDTO.setAuditHistoryId(token.getLong("auditHistoryId"));
+        equipmentDTO.setEquipmentWebId(token.getLong("equipmentWebId"));
+
+        broadCastMessage(token.getLong("auditHistoryId"), connector, token, gson.toJson(equipmentDTO), "responseUnMarkOffFromOther");
+    }
+
+    private void broadCastMessage(Long sessionId, WebSocketConnector exceptConnector, Token token, String message, String reqType)
+    {
+        Token response = createResponse(token);
+        response.setString("msg", message);
+        response.setString("reqType", reqType);
+        for (WebSocketConnector connector : User.getUsersInAnAuditSession(sessionId))
+            if (connector != exceptConnector)
+            {
+                sendToken(connector, response);
+            }
+    }
+
+    private void sendToToken(WebSocketConnector connector, Token token, String message, String reqType)
+    {
+        Token response = createResponse(token);
+        response.setString("msg", message);
+        response.setString("reqType", reqType);
+        sendToken(connector, response);
     }
 }
