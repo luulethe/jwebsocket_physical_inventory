@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: org.ancoron.postgresql:org.postgresql:9.1.901.jdbc4.1-rc9">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/ancoron/postgresql/org.postgresql/9.1.901.jdbc4.1-rc9/org.postgresql-9.1.901.jdbc4.1-rc9.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/org/ancoron/postgresql/org.postgresql/9.1.901.jdbc4.1-rc9/org.postgresql-9.1.901.jdbc4.1-rc9-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/ancoron/postgresql/org.postgresql/9.1.901.jdbc4.1-rc9/org.postgresql-9.1.901.jdbc4.1-rc9-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
