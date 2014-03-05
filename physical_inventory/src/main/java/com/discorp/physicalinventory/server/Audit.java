@@ -54,10 +54,19 @@ public class Audit extends TokenPlugIn
                 }
             }
         }
-        catch (JWebSocketException jWebSocketException)
-        {
+    catch (JWebSocketException jWebSocketException)
+    {
+        Token lResponse = createResponse(token);
+        lResponse.setString("msg","error server" );
+        lResponse.setString("reqType", "response" + token.getType());
 
-        }
+        sendErrorMessage(connector, token);
+    }
+    }
+
+    private void sendErrorMessage(WebSocketConnector connector, Token token)
+    {
+        sendToken(connector, token);
     }
 
     private void endAudit(WebSocketConnector connector, Token token) throws JWebSocketException

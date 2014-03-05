@@ -52,14 +52,23 @@ public class User
 
     public static List<WebSocketConnector> getUsersInAnAuditSession(Long auditHistoryId)
     {
-        return userMap.get(auditHistoryId);
+
+        if (userMap.get(auditHistoryId) == null)
+        {
+            return new ArrayList<WebSocketConnector>();
+        }
+        else
+        {
+            return userMap.get(auditHistoryId);
+        }
     }
+
     public static void printAllConnectors()
     {
         System.out.println("all connectors ... ");
-        for(Long sessionId: userMap.keySet())
+        for (Long sessionId : userMap.keySet())
         {
-            for(WebSocketConnector connector: userMap.get(sessionId))
+            for (WebSocketConnector connector : userMap.get(sessionId))
                 System.out.println(connector.generateUID());
         }
     }
