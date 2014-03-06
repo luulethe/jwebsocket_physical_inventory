@@ -54,8 +54,9 @@ public class Audit extends TokenPlugIn
                 }
             }
         }
-    catch (JWebSocketException jWebSocketException)
+    catch (Exception jWebSocketException)
     {
+        jWebSocketException.printStackTrace();
         Token lResponse = createResponse(token);
         lResponse.setString("msg","error server" );
         lResponse.setString("reqType", "response" + token.getType());
