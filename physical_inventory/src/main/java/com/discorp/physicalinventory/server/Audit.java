@@ -7,6 +7,7 @@ import com.discorp.wholegoods.model.InventoryResponseDTO;
 import com.discorp.wholegoods.model.inventory.InventoryProcessDTO;
 import com.discorp.xml.LoginStatus;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import org.jwebsocket.api.PluginConfiguration;
 import org.jwebsocket.api.WebSocketConnector;
 import org.jwebsocket.kit.PlugInResponse;
@@ -25,7 +26,7 @@ public class Audit extends TokenPlugIn
     private final static String NAME_SPACE = "com.discorp.physicalInventory.audit";
 
     private static WholeGoods wholeGoods = BaseService.getWholeGoods();
-    private static Gson gson = new Gson();
+    private static Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ssZ").create();
 
     public Audit(PluginConfiguration aConfiguration)
     {
@@ -103,6 +104,7 @@ public class Audit extends TokenPlugIn
         Token lResponse = createResponse(token);
 
         String result = gson.toJson(responseDTO);
+        System.out.println(result);
         lResponse.setString("msg", result);
         lResponse.setString("reqType", "responseStart");
 

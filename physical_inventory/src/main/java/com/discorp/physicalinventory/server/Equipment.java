@@ -8,12 +8,16 @@ import com.discorp.wholegoods.constant.ResponseStatus;
 import com.discorp.wholegoods.model.ImageDTO;
 import com.discorp.wholegoods.model.InventoryResponseDTO;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import org.apache.geronimo.mail.util.Base64;
 import org.jwebsocket.api.PluginConfiguration;
 import org.jwebsocket.api.WebSocketConnector;
 import org.jwebsocket.kit.PlugInResponse;
 import org.jwebsocket.logging.Logging;
 import org.jwebsocket.plugins.TokenPlugIn;
 import org.jwebsocket.token.Token;
+
+import java.text.DateFormat;
 
 /**
  * User: luult
@@ -26,10 +30,14 @@ public class Equipment extends TokenPlugIn
     private final static String NAME_SPACE = "com.discorp.physicalInventory.equipment";
 
     private static WholeGoods wholeGoods = BaseService.getWholeGoods();
-    private static Gson gson = new Gson();
+    private static Gson gson =
+
+            new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ssZ").create();
+
 
     public Equipment(PluginConfiguration aConfiguration)
     {
+
         super(aConfiguration);
         this.setNamespace(NAME_SPACE);
     }
@@ -148,7 +156,9 @@ public class Equipment extends TokenPlugIn
         {
             image.setFileName(token.getString("fileName"));
             image.setFileType(token.getString("fileType"));
-            image.setFileContent(token.getObject("fileContent").toString().getBytes());
+            String fileContent = token.getString("fileContent");
+
+            image.setFileContent( Base64.decode(fileContent));
         }
         LocationDTO locationDTO = (new Gson()).fromJson(token.getString("locationDTO"), LocationDTO.class);
         InventoryResponseDTO inventoryResponseDTO =

@@ -22,7 +22,7 @@ function submit()
 {
     var submitContent = document.getElementById("submitContent").value;
     if (submitContent.trim().length >0) {
-        var lToken =  JSON.parse(submitContent)
+        var lToken =  JSON.parse(submitContent.replace(/\n/, ''))
         if (!websocketClient.isConnected())
         {
             websocketClient = new jws.jWebSocketJSONClient();
