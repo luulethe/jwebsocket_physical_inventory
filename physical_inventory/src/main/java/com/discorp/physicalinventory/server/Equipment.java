@@ -65,6 +65,10 @@ public class Equipment extends TokenPlugIn
                 {
                     addUnknown(connector, token);
                 }
+                else if (lType.equals("updateUnknown"))
+                {
+                    updateUnknown(connector, token);
+                }
                 else if (lType.equals("scan"))
                 {
                     scan(connector, token);
@@ -90,6 +94,26 @@ public class Equipment extends TokenPlugIn
         }
     }
 
+    private void updateUnknown(WebSocketConnector connector, Token token)
+    {
+        ImageDTO image = new ImageDTO();
+        if (token.getString("fileName") != null)
+        {
+            image.setFileName(token.getString("fileName"));
+            image.setFileType(token.getString("fileType"));
+            String fileContent = token.getString("fileContent");
+
+            image.setFileContent( Base64.decode(fileContent));
+        }
+        LocationDTO locationDTO = (new Gson()).fromJson(token.getString("locationDTO"), LocationDTO.class);
+        InventoryResponseDTO inventoryResponseDTO =
+                wholeGoods.updateUnknownEquipment(token.getString("token"), Long.parseLong(token.getString("unknownEquipmentId")),
+                        image, token.getString("description"), locationDTO, token.getBoolean("identified"));
+        sendToToken(connector, token, gson.toJson(inventoryResponseDTO), "responseUpdateUnknown");
+        String resultForOther = gson.toJson(inventoryResponseDTO.getResultDTO());
+        broadCastMessage(Long.parseLong(token.getString("auditHistoryId")), connector, token, resultForOther, "responseUpdateUnknownFromOther");
+    }
+
     private void sendErrorMessage(WebSocketConnector connector, Token token)
     {
         sendToken(connector, token);
@@ -97,21 +121,16 @@ public class Equipment extends TokenPlugIn
 
     private void addNote(WebSocketConnector connector, Token token)
     {
-        System.out.println("b1");
         InventoryResponseDTO inventoryResponseDTO =
                 wholeGoods.addNote(token.getString("token"), Long.parseLong(token.getString("auditHistoryId")),
                         Long.parseLong(token.getString("equipmentWebId")), token.getString("note"));
-        System.out.println("b2");
         String result = gson.toJson(inventoryResponseDTO);
         sendToToken(connector, token, result, "responseAddNote");
-        System.out.println("b3");
         if ((inventoryResponseDTO.getInventoryStatusDTO() != null) &&
                 (inventoryResponseDTO.getInventoryStatusDTO().getStatus().equals(ResponseStatus.SUCCESS)))
         {
-            System.out.println("b4");
             sendAddNoteForOther(connector, token);
         }
-        System.out.println("finish add note");
     }
 
     private void sendAddNoteForOther(WebSocketConnector connector, Token token)
@@ -164,13 +183,9 @@ public class Equipment extends TokenPlugIn
         InventoryResponseDTO inventoryResponseDTO =
                 wholeGoods.addUnknownEquipment(token.getString("token"), Long.parseLong(token.getString("auditHistoryId")),
                         token.getString("description"), image, locationDTO, token.getBoolean("identified"));
-        System.out.println("b1");
         sendToToken(connector, token, gson.toJson(inventoryResponseDTO), "responseAddUnknown");
-        System.out.println("b2");
         String resultForOther = gson.toJson(inventoryResponseDTO.getResultDTO());
-        System.out.println("b3");
         broadCastMessage(Long.parseLong(token.getString("auditHistoryId")), connector, token, resultForOther, "responseAddUnknownFromOther");
-        System.out.println("b4");
     }
 
     private void scan(WebSocketConnector connector, Token token)

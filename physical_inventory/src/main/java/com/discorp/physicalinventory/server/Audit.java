@@ -76,12 +76,10 @@ public class Audit extends TokenPlugIn
         System.out.println(token.getBoolean("isFinish"));
         System.out.println(Long.parseLong(token.getString("auditHistoryId")));
         InventoryResponseDTO responseDTO = wholeGoods.endAudit(token.getString("token"), Long.parseLong(token.getString("auditHistoryId")), token.getBoolean("isFinish"));
-        System.out.println("b1");
         if (responseDTO.getLoginResult().getLoginStatus().equals(LoginStatus.PASS))
         {
             User.removeUserFromAuditSession(Long.parseLong(token.getString("auditHistoryId")), connector);
         }
-        System.out.println("b2");
         Token lResponse = createResponse(token);
 
         String result = gson.toJson(responseDTO);
