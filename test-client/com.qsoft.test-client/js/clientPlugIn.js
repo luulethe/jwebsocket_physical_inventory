@@ -5,6 +5,13 @@ jws.ToDoListClientPlugIn = {
     processToken: function (aToken)
     {
         document.getElementById("responseContent").value = JSON.stringify(aToken)
+        var token =  {
+            ns:"com.discorp.physicalInventory.handleResponse",
+            type:"ackResponse",
+            utidResponse:aToken["utid"]
+        }
+        this.submitToServer(token)
+
     },
     submitToServer: function (lToken,aOptions)
     {

@@ -13,7 +13,7 @@ import org.jwebsocket.plugins.ActionPlugIn;
  */
 public class ManageConnectorPlugIn extends ActionPlugIn
 {
-    public static final String NS_CHANNELS = "com.discorp.physicalInventory.ManageConnectorPlugIn";
+    public static final String NS_CHANNELS = "com.discorp.physicalInventory.manageConnectorPlugIn";
 
     public ManageConnectorPlugIn(PluginConfiguration aConfiguration)
     {
