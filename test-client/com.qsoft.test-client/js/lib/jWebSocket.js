@@ -2950,7 +2950,7 @@ jws.oop.declareClass( "jws", "jWebSocketTokenClient", jws.jWebSocketBaseClient, 
 		
 		// is it a token from the system plug-in at all?
 		if( jws.NS_SYSTEM === aToken.ns ) {
-			// check welcome and goodBye tokens to manage the session
+			// check welcome and goodBye tokens to manager the session
 			if ( aToken.type === "welcome") {
 				this.fClientId = aToken.sourceId;
 				this.fUsername = aToken.username;
@@ -2976,7 +2976,7 @@ jws.oop.declareClass( "jws", "jWebSocketTokenClient", jws.jWebSocketBaseClient, 
 				});
 			// check if we got a response from a previous request
 			} else if( aToken.type === "response" ) {
-				// check login and logout manage the username
+				// check login and logout manager the username
 				if( aToken.reqType === "login" || aToken.reqType === "logon") {
 					if (0 === aToken.code){
 						this.fUsername = aToken.username;
@@ -2996,7 +2996,7 @@ jws.oop.declareClass( "jws", "jWebSocketTokenClient", jws.jWebSocketBaseClient, 
 				// check if some requests need to be answered
 				this.checkCallbacks( aToken );
 			} else if( aToken.type === "event" ) {
-				// check login and logout manage the username
+				// check login and logout manager the username
 				if( aToken.name === "connect" ) {
 					this.processConnected( aToken );
 				}

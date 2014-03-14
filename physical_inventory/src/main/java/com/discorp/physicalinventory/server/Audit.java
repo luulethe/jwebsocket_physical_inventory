@@ -1,5 +1,6 @@
 package com.discorp.physicalinventory.server;
 
+import com.discorp.physicalinventory.manager.User;
 import com.discorp.physicalinventory.middletierservices.BaseService;
 import com.discorp.wholegoods.WholeGoods;
 import com.discorp.wholegoods.constant.ResponseStatus;
@@ -12,7 +13,6 @@ import org.jwebsocket.api.PluginConfiguration;
 import org.jwebsocket.api.WebSocketConnector;
 import org.jwebsocket.kit.PlugInResponse;
 import org.jwebsocket.logging.Logging;
-import org.jwebsocket.plugins.TokenPlugIn;
 import org.jwebsocket.token.Token;
 
 
@@ -20,7 +20,7 @@ import org.jwebsocket.token.Token;
  * User: luult
  * Date: 2/28/14
  */
-public class Audit extends TokenPlugIn
+public class Audit extends BaseTokenPlugIn
 {
     private static org.apache.log4j.Logger log = Logging.getLogger(Audit.class);
     private final static String NAME_SPACE = "com.discorp.physicalInventory.audit";
@@ -55,15 +55,15 @@ public class Audit extends TokenPlugIn
                 }
             }
         }
-    catch (Exception jWebSocketException)
-    {
-        jWebSocketException.printStackTrace();
-        Token lResponse = createResponse(token);
-        lResponse.setString("msg","error server" );
-        lResponse.setString("reqType", "response" + token.getType());
+        catch (Exception jWebSocketException)
+        {
+            jWebSocketException.printStackTrace();
+            Token lResponse = createResponse(token);
+            lResponse.setString("msg", "error server");
+            lResponse.setString("reqType", "response" + token.getType());
 
-        sendErrorMessage(connector, token);
-    }
+            sendErrorMessage(connector, token);
+        }
     }
 
     private void sendErrorMessage(WebSocketConnector connector, Token token)
@@ -85,7 +85,6 @@ public class Audit extends TokenPlugIn
         String result = gson.toJson(responseDTO);
         lResponse.setString("msg", result);
         lResponse.setString("reqType", "responseEnd");
-        System.out.println("b3");
         sendToken(connector, lResponse);
         System.out.println("end audit successfully");
     }

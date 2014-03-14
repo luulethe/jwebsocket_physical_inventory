@@ -1,7 +1,7 @@
 function logon()
 {
-//    var wsURL = "ws://172.16.10.37:8787/jwebsocket/jwebsocket";// get the default server url
-    var wsURL = "ws://192.168.1.69:8787/jwebsocket/jwebsocket";// get the default server url
+    var wsURL = "ws://172.16.10.37:8787/jwebsocket/jwebsocket";// get the default server url
+//    var wsURL = "ws://192.168.1.69:8787/jwebsocket/jwebsocket";// get the default server url
 //    var wsURL = jws.getDefaultServerURL();// get the default server url
     console.log("Connecting to " + websocketID + " at " + wsURL + "...");
 

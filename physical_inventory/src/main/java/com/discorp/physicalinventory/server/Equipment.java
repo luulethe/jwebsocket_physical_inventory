@@ -2,6 +2,7 @@ package com.discorp.physicalinventory.server;
 
 import com.discorp.model.dto.LocationDTO;
 import com.discorp.physicalinventory.dto.EquipmentDTO;
+import com.discorp.physicalinventory.manager.User;
 import com.discorp.physicalinventory.middletierservices.BaseService;
 import com.discorp.wholegoods.WholeGoods;
 import com.discorp.wholegoods.constant.ResponseStatus;
@@ -14,16 +15,13 @@ import org.jwebsocket.api.PluginConfiguration;
 import org.jwebsocket.api.WebSocketConnector;
 import org.jwebsocket.kit.PlugInResponse;
 import org.jwebsocket.logging.Logging;
-import org.jwebsocket.plugins.TokenPlugIn;
 import org.jwebsocket.token.Token;
-
-import java.text.DateFormat;
 
 /**
  * User: luult
  * Date: 2/28/14
  */
-public class Equipment extends TokenPlugIn
+public class Equipment extends BaseTokenPlugIn
 {
     private static org.apache.log4j.Logger log = Logging.getLogger(Audit.class);
 
@@ -40,6 +38,13 @@ public class Equipment extends TokenPlugIn
 
         super(aConfiguration);
         this.setNamespace(NAME_SPACE);
+    }
+
+    @Override
+    public void sendToken(WebSocketConnector connector, Token aToken)
+    {
+        aToken.setString("timeSend", System.currentTimeMillis() + "");
+        super.sendToken(connector, aToken);
     }
 
     @Override
@@ -101,9 +106,9 @@ public class Equipment extends TokenPlugIn
         {
             image.setFileName(token.getString("fileName"));
             image.setFileType(token.getString("fileType"));
-            String fileContent = token.getString("fileContent");
+//            String fileContent = token.getString("fileContent");
 
-            image.setFileContent( Base64.decode(fileContent));
+            image.setFileContent(token.getObject("fileContent").toString().getBytes());
         }
         LocationDTO locationDTO = (new Gson()).fromJson(token.getString("locationDTO"), LocationDTO.class);
         InventoryResponseDTO inventoryResponseDTO =
@@ -177,7 +182,7 @@ public class Equipment extends TokenPlugIn
             image.setFileType(token.getString("fileType"));
             String fileContent = token.getString("fileContent");
 
-            image.setFileContent( Base64.decode(fileContent));
+            image.setFileContent(Base64.decode(fileContent));
         }
         LocationDTO locationDTO = (new Gson()).fromJson(token.getString("locationDTO"), LocationDTO.class);
         InventoryResponseDTO inventoryResponseDTO =
@@ -217,7 +222,7 @@ public class Equipment extends TokenPlugIn
                 (inventoryResponseDTO.getInventoryStatusDTO().getStatus().equals(ResponseStatus.SUCCESS)))
         {
             String resultForOther = gson.toJson(inventoryResponseDTO.getResultDTO());
-            broadCastMessage(Long.parseLong(token.getString("auditHistoryId")), connector, token, resultForOther,"responseMarkOffFromOther");
+            broadCastMessage(Long.parseLong(token.getString("auditHistoryId")), connector, token, resultForOther, "responseMarkOffFromOther");
         }
     }
 
