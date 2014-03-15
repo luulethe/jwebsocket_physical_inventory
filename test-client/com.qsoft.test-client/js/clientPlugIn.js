@@ -8,7 +8,7 @@ jws.ToDoListClientPlugIn = {
         var token =  {
             ns:"com.discorp.physicalInventory.handleResponse",
             type:"ackResponse",
-            utidResponse:aToken["utid"]
+            utidResponse:aToken["id"]
         }
         this.submitToServer(token)
 

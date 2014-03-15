@@ -19,6 +19,7 @@ public class HandleResponse extends BaseTokenPlugIn
         super(aConfiguration);
         this.setNamespace(NAME_SPACE);
     }
+
     @Override
     public void processToken(PlugInResponse response, WebSocketConnector connector, Token token)
     {
@@ -30,8 +31,11 @@ public class HandleResponse extends BaseTokenPlugIn
         {
             if (lType.equals("ackResponse"))
             {
-                Integer utid = token.getInteger("utidResponse");
-                ManageMessage.remove(utid);
+                Integer id = token.getInteger("idResponse");
+                if (id != null)
+                {
+                    ManageMessage.remove(id);
+                }
             }
         }
     }

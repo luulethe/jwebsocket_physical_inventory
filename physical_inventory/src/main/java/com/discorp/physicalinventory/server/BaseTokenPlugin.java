@@ -1,6 +1,7 @@
 package com.discorp.physicalinventory.server;
 
 import com.discorp.physicalinventory.entity.Message;
+import com.discorp.physicalinventory.manager.ID;
 import com.discorp.physicalinventory.manager.ManageMessage;
 import org.jwebsocket.api.PluginConfiguration;
 import org.jwebsocket.api.WebSocketConnector;
@@ -21,6 +22,11 @@ public class BaseTokenPlugIn extends TokenPlugIn
         super(aConfiguration);
     }
 
+    public void sendTokenHasGenId(WebSocketConnector connector, Token aToken)
+    {
+        aToken.setInteger("id", ID.getNextTokenId());
+        sendToken(connector, aToken);
+    }
     @Override
     public void sendToken(WebSocketConnector connector, Token aToken)
     {
@@ -29,8 +35,8 @@ public class BaseTokenPlugIn extends TokenPlugIn
         System.out.println(aToken);
         super.sendToken(connector, aToken);
 
-        Integer utid = (Integer) aToken.getMap().get("utid");
-        Message message = ManageMessage.get(utid);
+        Integer id = aToken.getInteger("id");
+        Message message = ManageMessage.get(id);
         if (message == null)
         {
             message = new Message(connector, aToken, 0, currentTime, this);

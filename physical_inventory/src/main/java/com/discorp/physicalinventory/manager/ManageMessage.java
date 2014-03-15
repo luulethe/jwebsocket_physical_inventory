@@ -20,11 +20,13 @@ public class ManageMessage
 {
     private static HashMap<Integer, Message> messages = new HashMap<Integer, Message>();
     private static List<Message> allMessage = new ArrayList<Message>();
+    private static List<Message> newMessageList = new ArrayList<Message>();
     public static List<Message> getAllMessages()
     {
         return allMessage;
     }
     private static boolean isCreatedCronJob = false;
+
 
     public static boolean isCreatedCronJob()
     {
@@ -38,23 +40,23 @@ public class ManageMessage
 
     public static void add(Message message)
     {
-        messages.put((Integer) (message.getToken().getMap().get("utid")), message);
+        messages.put((Integer) (message.getToken().getInteger("id")), message);
         allMessage.add(message);
     }
 
-    public static void remove(Integer utid)
+    public static void remove(Integer id)
     {
-        Message message = messages.remove(utid);
+        Message message = messages.remove(id);
         allMessage.remove(message);
     }
     public static void remove(Message message)
     {
-        Integer utid = (Integer) message.getToken().getMap().get("utid");
-        remove(utid);
+        Integer id = (Integer) message.getToken().getInteger("id");
+        remove(id);
     }
-    public static Message get(Integer utid)
+    public static Message get(Integer id)
     {
-        return messages.get(utid);
+        return messages.get(id);
     }
     public static void createCronJob() throws SchedulerException
     {
@@ -67,7 +69,7 @@ public class ManageMessage
         trigger.setName("dummyTriggerName");
         trigger.setStartTime(new Date(System.currentTimeMillis() + 3000));
         trigger.setRepeatCount(SimpleTrigger.REPEAT_INDEFINITELY);
-        trigger.setRepeatInterval(3000);
+        trigger.setRepeatInterval(4001);
 
         //schedule it
         Scheduler scheduler = new StdSchedulerFactory().getScheduler();

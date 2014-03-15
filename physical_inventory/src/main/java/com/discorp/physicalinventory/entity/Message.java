@@ -77,6 +77,9 @@ public class Message
 
     public void increaseNumberSent()
     {
+        System.out.println("incresing.......................");
+        System.out.println(webSocketConnector);
+        System.out.println(token);
         this.numberSent++;
     }
 }

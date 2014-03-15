@@ -7,6 +7,7 @@ import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -19,18 +20,21 @@ public class CronMessage implements Job
     public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException
     {
         List<Message> allMessage = ManageMessage.getAllMessages();
+        List<Message> deleteMessageList = new ArrayList<Message>();
         Long currentTime = System.currentTimeMillis();
         for (Message message : allMessage)
         {
-            System.out.println("resending....");
+            System.out.println("resending.............................");
+            System.out.println(message.getNumberSent());
             System.out.println(message.getToken());
-            if (message.getNumberSent() == Constant.NUMBER_RESEND_MAX)
+            if (message.getNumberSent() >= Constant.NUMBER_RESEND_MAX)
             {
-                disconnect(message);
-                ManageMessage.remove(message);
                 System.out.println("disconnect this connector because number of sent exceeds 3");
+                disconnect(message);
+                deleteMessageList.add(message);
             }
-            if (message.getSentTime() + Constant.RESEND_TIME > currentTime)
+            else
+            if (message.getSentTime() + Constant.RESEND_TIME < currentTime)
             {
                 resend(message);
             }
@@ -38,6 +42,10 @@ public class CronMessage implements Job
             {
                 break;
             }
+        }
+        for(Message message : deleteMessageList)
+        {
+            ManageMessage.remove(message);
         }
     }
 

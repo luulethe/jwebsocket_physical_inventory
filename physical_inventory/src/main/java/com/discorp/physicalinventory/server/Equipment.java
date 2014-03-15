@@ -41,13 +41,6 @@ public class Equipment extends BaseTokenPlugIn
     }
 
     @Override
-    public void sendToken(WebSocketConnector connector, Token aToken)
-    {
-        aToken.setString("timeSend", System.currentTimeMillis() + "");
-        super.sendToken(connector, aToken);
-    }
-
-    @Override
     public void processToken(PlugInResponse response, WebSocketConnector connector, Token token)
     {
         String lType = token.getType();
@@ -258,7 +251,7 @@ public class Equipment extends BaseTokenPlugIn
         for (WebSocketConnector connector : User.getUsersInAnAuditSession(sessionId))
             if (connector != exceptConnector)
             {
-                sendToken(connector, response);
+                sendTokenHasGenId(connector, response);
             }
     }
 
@@ -267,6 +260,6 @@ public class Equipment extends BaseTokenPlugIn
         Token response = createResponse(token);
         response.setString("msg", message);
         response.setString("reqType", reqType);
-        sendToken(connector, response);
+        sendTokenHasGenId(connector, response);
     }
 }

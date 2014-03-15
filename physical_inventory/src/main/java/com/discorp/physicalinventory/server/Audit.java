@@ -85,7 +85,7 @@ public class Audit extends BaseTokenPlugIn
         String result = gson.toJson(responseDTO);
         lResponse.setString("msg", result);
         lResponse.setString("reqType", "responseEnd");
-        sendToken(connector, lResponse);
+        sendTokenHasGenId(connector, lResponse);
         System.out.println("end audit successfully");
     }
 
@@ -105,7 +105,7 @@ public class Audit extends BaseTokenPlugIn
         lResponse.setString("msg", result);
         lResponse.setString("reqType", "responseStart");
 
-        sendToken(connector, lResponse);
+        sendTokenHasGenId(connector, lResponse);
         System.out.println("success start");
     }
 }
