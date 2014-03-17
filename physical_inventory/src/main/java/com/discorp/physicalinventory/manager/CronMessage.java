@@ -22,8 +22,10 @@ public class CronMessage implements Job
         List<Message> allMessage = ManageMessage.getAllMessages();
         List<Message> deleteMessageList = new ArrayList<Message>();
         Long currentTime = System.currentTimeMillis();
-        for (Message message : allMessage)
+        int totalMessage = allMessage.size();
+        for (int i = 0; i < totalMessage; i++)
         {
+            Message message = allMessage.get(i);
             System.out.println("resending.............................");
             System.out.println(message.getNumberSent());
             System.out.println(message.getToken());
@@ -33,8 +35,7 @@ public class CronMessage implements Job
                 disconnect(message);
                 deleteMessageList.add(message);
             }
-            else
-            if (message.getSentTime() + Constant.RESEND_TIME < currentTime)
+            else if (message.getSentTime() + Constant.RESEND_TIME < currentTime)
             {
                 resend(message);
             }
@@ -43,7 +44,7 @@ public class CronMessage implements Job
                 break;
             }
         }
-        for(Message message : deleteMessageList)
+        for (Message message : deleteMessageList)
         {
             ManageMessage.remove(message);
         }
